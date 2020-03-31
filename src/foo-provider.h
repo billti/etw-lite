@@ -32,7 +32,7 @@ Alternatively, use a tool such as PerfView or WPR to configure and record traces
 
 #pragma once
 
-#include "etw-provider.h"
+#include "../lib/etw-provider.h"
 
 namespace etw {
 namespace foo {

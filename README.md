@@ -13,13 +13,14 @@ runtime and compile-time) and easy to instrument code with. Specifically:
 
 ## The implementation
 
-The files that make up the basic framework are:
+The files that make up the basic framework (in the `./lib` directory) are:
 
  - `etw-metadata.h`: Defines the variadic templates for constructing ETW metadata
  - `etw-provider.h`: Defines the EtwProvider base class to derive providers from
  - `etw-provider.cpp`: Implements calls to register the provider, maintain state, etc.
 
-To implement a provider, follow the basic outline shown in the below files:
+To implement a provider, follow the basic outline shown in the below files (in the
+`./src` directory):
 
  - `foo-provider.h`: Per-provider class that derives from EtwProvider
  - `foo-provider.cc`: Provides the implementation to do the actual logging calls

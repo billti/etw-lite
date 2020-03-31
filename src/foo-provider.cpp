@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "etw-metadata.h"
+#include "../lib/etw-metadata.h"
 #include "foo-provider.h"
 
 #include <type_traits>
