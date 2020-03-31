@@ -2,6 +2,34 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+/*
+Provide name and GUID generated from it are:
+
+    "billti-example",
+    // {c212d3ce-dfb9-5469-08f5-f477b0d92305}
+    (0xc212d3ce,0xdfb9,0x5469,0x08,0xf5,0xf4,0x77,0xb0,0xd9,0x23,0x05));
+
+Note: Below should be run from an admin prompt.
+
+For simple testing, use "logman" to create a trace for this provider via:
+
+  logman create trace -n example -o example.etl -p {c212d3ce-dfb9-5469-08f5-f477b0d92305}
+
+After the provider GUID, you can optionally specificy keywords and level, e.g.
+
+  -p {c212d3ce-dfb9-5469-08f5-f477b0d92305} 0xBEEF 0x05
+
+To capture events, start/stop the trace via:
+  logman start example
+  logman stop example
+
+When finished recording, remove the configured trace via:
+
+  logman delete example
+
+Alternatively, use a tool such as PerfView or WPR to configure and record traces.
+*/
+
 #pragma once
 
 #include "etw-provider.h"
@@ -9,8 +37,7 @@
 namespace etw {
 namespace foo {
 
-constexpr char ProviderName[] = "FooProvider";
-static_assert(sizeof(ProviderName) < kMaxTraitSize - 3);
+constexpr char ProviderName[] = "billti-example";
 
 // Define the event descriptor data for each event
 // Note: Order of fields is: eventId, level, opcode, task, keyword
@@ -32,7 +59,7 @@ class FooProvider : public EtwProvider {
 
 // For the "real" implementation, override the pure virtual functions
   const GUID* Guid() final {
-    constexpr static GUID id = {0x12345678, 0xFFFF, 0xFFFF, {1, 2, 3, 4, 5, 6, 7, 8}};
+    constexpr static GUID id = {0xc212d3ce,0xdfb9,0x5469,0x08,0xf5,0xf4,0x77,0xb0,0xd9,0x23,0x05};
     return &id;
   }
 
