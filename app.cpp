@@ -6,7 +6,7 @@
 
 int main() {
   // At initialization
-  etw::Foo.Register();
+  etw::Foo.Initialize();
 
   // Logging during execution
   etw::Foo.AppLaunched();

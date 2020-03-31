@@ -38,6 +38,7 @@ namespace etw {
 namespace foo {
 
 constexpr char ProviderName[] = "billti-example";
+constexpr GUID ProviderGuid = {0xc212d3ce,0xdfb9,0x5469,0x08,0xf5,0xf4,0x77,0xb0,0xd9,0x23,0x05};
 
 // Define the event descriptor data for each event
 // Note: Order of fields is: eventId, level, opcode, task, keyword
@@ -52,19 +53,14 @@ class FooProvider : public EtwProvider {
 #if defined(NO_ETW)
 
 // For NO_ETW, just provide inlined no-op versions of the public APIs
+  void Initialize(){}
   void AppLaunched(){}
   void ParsingStart(const char* filename, int offset) {}
 
 #else  // defined(NO_ETW)
 
-// For the "real" implementation, override the pure virtual functions
-  const GUID* Guid() final {
-    constexpr static GUID id = {0xc212d3ce,0xdfb9,0x5469,0x08,0xf5,0xf4,0x77,0xb0,0xd9,0x23,0x05};
-    return &id;
-  }
-
-  const char* Name() final {
-    return ProviderName;
+  void Initialize() {
+    Register(ProviderGuid, ProviderName);
   }
 
   // The public APIs to log the events should all be inline wrappers that call

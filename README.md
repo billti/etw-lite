@@ -55,8 +55,8 @@ nothing is listening for the events to be logged.
 An instance of each ETW provider class is declared and defined as a global variable.
 A global is used, as the provider should be a singleton in a binary, and this
 allows checking if a provider is enabled to be a single `cmp byte ptr [foo+10], 0`
-instruction. Having the class instance be a global of a trivial POD data-type also
-means it will be zero initialized and will not require a constructor (or destructor)
+instruction. Having the class instance be a global of a trivially constructable data-type also
+means it will be statically initialized and will not require a constructor (or destructor)
 to be invoked at process startup or shutdown. This helps avoid race conditions
 with initialization (e.g. the `IsEnabled` flag will be 0 when the provider is
 uninitialized), versus having a class instance that needs to be initialized by the
@@ -70,7 +70,7 @@ elided. As a simple example, the below shows a simple function compiled with opt
 
 ```cpp
 int main() {
-  etw::Foo.Register();   // Call at some point during app initialization.
+  etw::Foo.Initialize();   // Call at some point during app initialization.
 
   // While doing stuff..
   etw::Foo.AppLaunched();

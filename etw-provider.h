@@ -71,7 +71,7 @@ class EtwProvider {
 #if defined(NO_ETW)
 
 // For NO_ETW, the class is just the public APIs as inlined no-ops
-  void Register() {}
+  void Register(const GUID& providerGuid, const char* providerName) {}
   void Unregister() {}
 
   uint8_t  Level()     { return 0; }
@@ -82,11 +82,7 @@ class EtwProvider {
 
 #else  // defined(NO_ETW)
 
-  // Providers must implement these two methods for the provider name and guid
-  virtual const GUID* Guid() = 0;
-  virtual const char* Name() = 0;
-
-  void Register();
+  void Register(const GUID& providerGuid, const char* providerName);
   void Unregister();
 
   // Inline any calls to check the provider state
@@ -119,7 +115,7 @@ class EtwProvider {
   }
   uint64_t RegHandle() { return state.regHandle; }
 
-  ProviderState state{0};
+  ProviderState state;
 
 #endif  // defined(NO_ETW)
 

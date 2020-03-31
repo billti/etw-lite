@@ -5,6 +5,8 @@
 #include "etw-metadata.h"
 #include "foo-provider.h"
 
+#include <type_traits>
+
 namespace etw {
 namespace foo {
 
@@ -29,6 +31,9 @@ void FooProvider::LogParsingStart(const char* fileName, int offset) {
 } //  namespace foo
 
 // Create the global "etw::Foo" that is the instance of the provider
+static_assert(std::is_trivially_constructible<foo::FooProvider>::value,
+    "FooProvider is not trivially constructable");
+
 foo::FooProvider Foo{};
 
 }  // namespace etw
