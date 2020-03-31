@@ -105,6 +105,7 @@ class EtwProvider {
   }
 
  protected:
+  // Derived classes need access to read the state for the logging calls
   const ProviderState& State() { return state; }
 
  private:

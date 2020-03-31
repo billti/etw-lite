@@ -21,7 +21,7 @@ void EtwProvider::Register() {
   // Copy the provider name, prefixed by a UINT16 length, to the provider traits
   // The string in the buffer should be null terminated.
   // See https://docs.microsoft.com/en-us/windows/win32/etw/provider-traits
-  uint16_t trait_size = sizeof(uint16_t) + strlen(Name() + 1);
+  uint16_t trait_size = sizeof(uint16_t) + strlen(Name()) + 1;
   *reinterpret_cast<uint16_t*>(&state.provider_trait[0]) = trait_size;
   strcpy_s(&state.provider_trait[2], kMaxTraitSize - 2, Name());
 }

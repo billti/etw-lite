@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Provides templates and functions to enable the `constexpr` declaration
-// of metadata for ETW events.
-
 #pragma once
 
 #include "etw-provider.h"
