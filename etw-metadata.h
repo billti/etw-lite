@@ -163,6 +163,14 @@ void SetFieldDescriptors(EVENT_DATA_DESCRIPTOR *data_descriptors,
   SetFieldDescriptors(++data_descriptors, rest...);
 }
 
+template <typename... Ts>
+void SetFieldDescriptors(EVENT_DATA_DESCRIPTOR *data_descriptors,
+                         const char* value, const Ts&... rest) {
+  ULONG size = strlen(value);
+  EventDataDescCreate(data_descriptors, value, size);
+  SetFieldDescriptors(++data_descriptors, rest...);
+}
+
 // Base case, no fields left to set
 void SetFieldDescriptors(EVENT_DATA_DESCRIPTOR *data_descriptors) {}
 
