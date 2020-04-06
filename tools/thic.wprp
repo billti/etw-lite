@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WindowsPerformanceRecorder Version="1.0">
+  <!--
+Note: The WPR/WPA utilities are usually installed to: "C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit"
+See https://docs.microsoft.com/en-us/windows-hardware/test/wpt/ for an overview of the tools.
+
+Start and stop the trace, open WPRUI, and use the dialog to load/enable the profile, and start/save the trace.
+
+For details on editing this file, see https://docs.microsoft.com/en-us/windows-hardware/test/wpt/authoring-recording-profiles
+
+Note: Most of the content below is to configure the kernel logger, which is not necessary just for
+provider events, but handy if you want to capture things like CPU samples, process names, file I/O, etc.
+  -->
+  <Profiles>
+    <SystemCollector Id="SystemCollector" Name="NT Kernel Logger">
+      <BufferSize Value="1024"/>
+      <Buffers Value="384"/>
+    </SystemCollector>
+    <EventCollector Id="EventCollector_Thic" Name="Thic Event Collector">
+      <BufferSize Value="1024"/>
+      <Buffers Value="256"/>
+    </EventCollector>
+    <SystemProvider Id="SystemProvider">
+      <Keywords>
+        <Keyword Value="ProcessThread"/>
+        <Keyword Value="Loader"/>
+        <Keyword Value="SampledProfile"/>
+        <Keyword Value="ReadyThread"/>
+        <Keyword Value="CSwitch"/>
+        <Keyword Value="DiskIOInit"/>
+        <Keyword Value="FileIOInit"/>
+        <Keyword Value="HardFaults"/>
+      </Keywords>
+      <Stacks>
+        <!-- See https://docs.microsoft.com/en-us/windows-hardware/test/wpt/stack-wpa for options -->
+        <Stack Value="SampledProfile"/>
+        <Stack Value="ReadyThread"/>
+        <Stack Value="CSwitch"/>
+      </Stacks>
+    </SystemProvider>
+    <EventProvider Id="Provider_Thic" Name="1b0d5501-a5fb-5d95-d960-4647bec69d41" Level="5" Stack="true"></EventProvider>
+    <Profile Id="Thic.Verbose.File" Name="Thic" DetailLevel="Verbose" LoggingMode="File" Description="Thic profile">
+      <Collectors>
+        <SystemCollectorId Value="SystemCollector">
+          <SystemProviderId Value="SystemProvider"></SystemProviderId>
+        </SystemCollectorId>
+        <EventCollectorId Value="EventCollector_Thic">
+          <EventProviders>
+            <EventProviderId Value="Provider_Thic"></EventProviderId>
+          </EventProviders>
+        </EventCollectorId>
+      </Collectors>
+    </Profile>
+    <Profile Id="Thic.Verbose.Memory" Base="Thic.Verbose.File" Name="Thic" DetailLevel="Verbose" LoggingMode="Memory" Description="Thic profile"></Profile>
+  </Profiles>
+</WindowsPerformanceRecorder>

@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!--
+For use in Windows Performance Analyzer with traces from the Thic ETW provider
+See https://docs.microsoft.com/en-us/windows-hardware/test/wpt/creating-a-regions-of-interest-file
+-->
+<InstrumentationManifest>
+  <Instrumentation>
+    <Regions>
+      <RegionRoot Guid="{E2A4A78A-620B-410B-9F90-BEF843ED83D0}" Name="Thic" FriendlyName="Thic">
+        <Region Guid="{DB52C8A0-C130-4AA7-B040-8A0AC54302F1}" Name="Thic-Parsing" FriendlyName="Parsing">
+          <Start>
+            <Event Provider="{1b0d5501-a5fb-5d95-d960-4647bec69d41}" Id="101" Version="0" />
+          </Start>
+          <Stop>
+            <Event Provider="{1b0d5501-a5fb-5d95-d960-4647bec69d41}" Id="102" Version="0" />
+          </Stop>
+          <Match>
+            <Event PID="true">
+			        <Payload FieldName="myField" />
+			      </Event>
+          </Match>
+        </Region>
+      </RegionRoot>
+    </Regions>
+  </Instrumentation>
+</InstrumentationManifest>
