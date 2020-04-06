@@ -35,32 +35,38 @@ Alternatively, use a tool such as PerfView or WPR to configure and record traces
 #include "../lib/etw-provider.h"
 
 namespace etw {
-namespace foo {
+namespace lean {
 
 constexpr char ProviderName[] = "billti-example";
-constexpr GUID ProviderGuid = {0xc212d3ce,0xdfb9,0x5469,0x08,0xf5,0xf4,0x77,0xb0,0xd9,0x23,0x05};
+constexpr GUID ProviderGuid = {0xc212d3ce,0xdfb9,0x5469,{0x08,0xf5,0xf4,0x77,0xb0,0xd9,0x23,0x05}};
 
 // Define the event descriptor data for each event
 // Note: Order of fields is: eventId, level, opcode, task, keyword
-constexpr EventInfo AppLaunchedEvent {100, kLevelInfo};
-constexpr EventInfo ParsingStartEvent{101, kLevelVerbose, kOpCodeStart};
-constexpr EventInfo ParsingStopEvent {102, kLevelVerbose, kOpCodeStop};
+constexpr EventInfo AppLaunchedEvent {100, kLevelInfo, 0, 0, 0};
+constexpr EventInfo ParsingStartEvent{101, kLevelVerbose, kOpCodeStart, 0, 0};
+constexpr EventInfo ParsingStopEvent {102, kLevelVerbose, kOpCodeStop, 0, 0};
 
 
-class FooProvider : public EtwProvider {
+class LeanProvider : public EtwProvider {
  public:
 
 #if defined(NO_ETW)
 
 // For NO_ETW, just provide inlined no-op versions of the public APIs
+  void RegisterProvider(){}
+  void UnregisterProvider(){}
   void Initialize(){}
   void AppLaunched(){}
   void ParsingStart(const char* filename, int offset) {}
 
 #else  // defined(NO_ETW)
 
-  void Initialize() {
+  void RegisterProvider() {
     Register(ProviderGuid, ProviderName);
+  }
+
+  void UnregisterProvider() {
+    Unregister();
   }
 
   // The public APIs to log the events should all be inline wrappers that call
@@ -88,9 +94,9 @@ class FooProvider : public EtwProvider {
 
 };
 
-}  // namespace foo
+}  // namespace lean
 
-// Declare the global "etw::Foo" that is the instance of the provider
-extern foo::FooProvider Foo;
+// Declare the global "etw::Lean" that is the instance of the provider
+extern lean::LeanProvider Lean;
 
 }  // namespace etw

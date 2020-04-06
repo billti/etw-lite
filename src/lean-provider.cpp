@@ -2,23 +2,24 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "../lib/etw-metadata.h"
-#include "foo-provider.h"
+#include "lean-provider.h"
 
 #include <type_traits>
 
+#include "../lib/etw-metadata.h"
+
 namespace etw {
-namespace foo {
+namespace lean {
 
 #if !defined(NO_ETW)
-void FooProvider::LogAppLaunched() {
+void LeanProvider::LogAppLaunched() {
   constexpr static auto event_desc = EventDescriptor(AppLaunchedEvent);
   constexpr static auto event_meta = EventMetadata("AppLaunched");
 
   LogEventData(State(), &event_desc, &event_meta);
 }
 
-void FooProvider::LogParsingStart(const char* fileName, int offset) {
+void LeanProvider::LogParsingStart(const char* fileName, int offset) {
   constexpr static auto event_desc = EventDescriptor(ParsingStartEvent);
   constexpr static auto event_meta = EventMetadata("ParsingStart", 
       Field("Filename", kTypeAnsiStr),
@@ -28,11 +29,11 @@ void FooProvider::LogParsingStart(const char* fileName, int offset) {
 }
 #endif
 
-static_assert(std::is_trivial<FooProvider>::value, "FooProvider is not trivial");
+static_assert(std::is_trivial<LeanProvider>::value, "LeanProvider is not trivial");
 
-} //  namespace foo
+} //  namespace lean
 
-// Create the global "etw::Foo" that is the instance of the provider
-foo::FooProvider Foo{};
+// Create the global "etw::Lean" that is the instance of the provider
+lean::LeanProvider Lean{};
 
 }  // namespace etw

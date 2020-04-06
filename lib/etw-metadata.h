@@ -4,6 +4,11 @@
 
 #pragma once
 
+#if !(defined(__GNUC__) && __cplusplus >= 201402L || \
+      defined(_MSC_VER) &&  _MSVC_LANG >= 201402L)
+#error C++14 or later required
+#endif
+
 #if !defined(NO_ETW) // Avoid accidental inclusion in NO_ETW builds.
 
 #include <Windows.h>
@@ -90,9 +95,7 @@ constexpr auto JoinFields() { return str_bytes<0>{}; }
 
 // Only one field, or base case when multiple fields.
 template <typename T1>
-constexpr auto JoinFields(T1 field) {
-  return field;
-}
+constexpr auto JoinFields(T1 field) { return field; }
 
 // Join two or more fields together.
 template <typename T1, typename T2, typename... Ts>
@@ -132,7 +135,7 @@ constexpr auto EventDescriptor(const etw::EventInfo& info) {
   };
 }
 
-void SetMetaDescriptors(EVENT_DATA_DESCRIPTOR* data_descriptor,
+inline void SetMetaDescriptors(EVENT_DATA_DESCRIPTOR* data_descriptor,
                         const char* traits, const void* metadata,
                         size_t size) {
   // The first descriptor is the provider traits (just the name currently)
@@ -146,6 +149,22 @@ void SetMetaDescriptors(EVENT_DATA_DESCRIPTOR* data_descriptor,
   data_descriptor->Type = EVENT_DATA_DESCRIPTOR_TYPE_EVENT_METADATA;
 }
 
+// Base case, no fields left to set
+inline void SetFieldDescriptors(EVENT_DATA_DESCRIPTOR *data_descriptors) {}
+
+// Need to declare all the base overloads in advance, as ther bodies may become
+// a point of reference for any of the overloads, and only overloads that have
+// been seen at the point of reference will be candidates.
+template <typename... Ts>
+void SetFieldDescriptors(EVENT_DATA_DESCRIPTOR *data_descriptors,
+                         const std::wstring& value, const Ts&... rest);
+template <typename... Ts>
+void SetFieldDescriptors(EVENT_DATA_DESCRIPTOR *data_descriptors,
+                         const std::string& value, const Ts&... rest);
+template <typename... Ts>
+void SetFieldDescriptors(EVENT_DATA_DESCRIPTOR *data_descriptors,
+                         const char* value, const Ts&... rest);
+
 // One or more fields to set
 template <typename T, typename... Ts>
 void SetFieldDescriptors(EVENT_DATA_DESCRIPTOR *data_descriptors,
@@ -157,6 +176,14 @@ void SetFieldDescriptors(EVENT_DATA_DESCRIPTOR *data_descriptors,
 // Specialize for strings
 template <typename... Ts>
 void SetFieldDescriptors(EVENT_DATA_DESCRIPTOR *data_descriptors,
+                         const std::wstring& value, const Ts&... rest) {
+  EventDataDescCreate(data_descriptors, value.data(),
+                      static_cast<ULONG>(value.size() * 2 + 2));
+  SetFieldDescriptors(++data_descriptors, rest...);
+}
+
+template <typename... Ts>
+void SetFieldDescriptors(EVENT_DATA_DESCRIPTOR *data_descriptors,
                          const std::string& value, const Ts&... rest) {
   EventDataDescCreate(data_descriptors, value.data(),
                       static_cast<ULONG>(value.size() + 1));
@@ -166,13 +193,10 @@ void SetFieldDescriptors(EVENT_DATA_DESCRIPTOR *data_descriptors,
 template <typename... Ts>
 void SetFieldDescriptors(EVENT_DATA_DESCRIPTOR *data_descriptors,
                          const char* value, const Ts&... rest) {
-  ULONG size = strlen(value);
+  ULONG size = static_cast<ULONG>(strlen(value) + 1);
   EventDataDescCreate(data_descriptors, value, size);
   SetFieldDescriptors(++data_descriptors, rest...);
 }
-
-// Base case, no fields left to set
-void SetFieldDescriptors(EVENT_DATA_DESCRIPTOR *data_descriptors) {}
 
 // This function does the actual writing of the event via the Win32 API
 inline ULONG LogEvent(uint64_t regHandle, const EVENT_DESCRIPTOR* event_descriptor,

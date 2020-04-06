@@ -12,7 +12,7 @@
 
 namespace etw {
 
-void EtwProvider::Register(const GUID& guid, const char* providerName) {
+uint32_t EtwProvider::Register(const GUID& guid, const char* providerName) {
   // Use a local static to ensure registration only happens once
   // Note: This means it cannot be "re-registered" after being unregistered.
   static uint32_t hr = EventRegister(reinterpret_cast<const ::GUID*>(&guid),
@@ -24,6 +24,8 @@ void EtwProvider::Register(const GUID& guid, const char* providerName) {
   uint16_t trait_size = sizeof(uint16_t) + strlen(providerName) + 1;
   *reinterpret_cast<uint16_t*>(&state.provider_trait[0]) = trait_size;
   strcpy_s(&state.provider_trait[2], kMaxTraitSize - 2, providerName);
+
+  return hr;
 }
 
 void EtwProvider::Unregister() {

@@ -2,17 +2,19 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "foo-provider.h"
+#include "thic-provider.h"
+
+// Provide the definition for the global instance of the Thic provider somewhere
+etw::thic::ThicProvider Thic{};
 
 int main() {
   // At initialization
-  etw::Foo.Initialize();
+  Thic.RegisterProvider();
 
   // Logging during execution
-  etw::Foo.AppLaunched();
-  etw::Foo.ParsingStart("test", 0);
+  Thic.ParsingStart("ing", 55);
   // etc.
 
   // On shutdown (optional)
-  etw::Foo.Unregister();
+  Thic.UnregisterProvider();
 }

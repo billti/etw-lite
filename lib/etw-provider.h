@@ -55,11 +55,23 @@ const uint8_t kOpCodeStart = 1;
 const uint8_t kOpCodeStop = 2;
 
 // Event field data types. See "enum TlgIn_t" in <TraceLoggingProvider.h>
-const uint8_t kTypeAnsiStr = 2;
-const uint8_t kTypeInt8 = 3;
-const uint8_t kTypeInt32 = 7;
-const uint8_t kTypeDouble = 12;
-const uint8_t kTypePointer = 21;
+const uint8_t kTypeUnicodeStr = 1;  // WCHARs (wchar_t on Windows)
+const uint8_t kTypeAnsiStr    = 2;  // CHARs  (char on Windows)
+const uint8_t kTypeInt8       = 3;
+const uint8_t kTypeUInt8      = 4;
+const uint8_t kTypeInt16      = 5;
+const uint8_t kTypeUInt16     = 6;
+const uint8_t kTypeInt32      = 7;
+const uint8_t kTypeUInt32     = 8;
+const uint8_t kTypeInt64      = 9;
+const uint8_t kTypeUInt64     = 10;
+const uint8_t kTypeFloat      = 11;
+const uint8_t kTypeDouble     = 12;
+const uint8_t kTypeBool32     = 13;
+
+const uint8_t kTypeHexInt32   = 20;
+const uint8_t kTypeHexInt64   = 21;
+const uint8_t kTypePointer    = (sizeof(void*) == 8) ? kTypeHexInt64 : kTypeHexInt32;
 
 // All "manifest-free" events should go to channel 11 by default
 const uint8_t kManifestFreeChannel = 11;
@@ -71,9 +83,6 @@ class EtwProvider {
 #if defined(NO_ETW)
 
 // For NO_ETW, the class is just the public APIs as inlined no-ops
-  void Register(const GUID& providerGuid, const char* providerName) {}
-  void Unregister() {}
-
   uint8_t  Level()     { return 0; }
   uint64_t Keywords()  { return 0; }
 
@@ -82,11 +91,8 @@ class EtwProvider {
 
 #else  // defined(NO_ETW)
 
-  void Register(const GUID& providerGuid, const char* providerName);
-  void Unregister();
-
   // Inline any calls to check the provider state
-  int8_t   Level()     { return state.level; }
+  uint8_t  Level()     { return state.level; }
   uint64_t Keywords()  { return state.keywords; }
 
   bool IsEnabled() { 
@@ -101,6 +107,9 @@ class EtwProvider {
   }
 
  protected:
+  uint32_t Register(const GUID& providerGuid, const char* providerName);
+  void Unregister();
+
   // Derived classes need access to read the state for the logging calls
   const ProviderState& State() { return state; }
 
