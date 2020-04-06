@@ -5,19 +5,18 @@
 /*
 Provide name and GUID generated from it are:
 
-    "billti-example",
-    // {c212d3ce-dfb9-5469-08f5-f477b0d92305}
-    (0xc212d3ce,0xdfb9,0x5469,0x08,0xf5,0xf4,0x77,0xb0,0xd9,0x23,0x05));
+    "billti-lean",
+    {27ba81ef-27c8-50b0-d951-267383db4862}
 
 Note: Below should be run from an admin prompt.
 
 For simple testing, use "logman" to create a trace for this provider via:
 
-  logman create trace -n example -o example.etl -p {c212d3ce-dfb9-5469-08f5-f477b0d92305}
+  logman create trace -n example -o example.etl -p {27ba81ef-27c8-50b0-d951-267383db4862}
 
 After the provider GUID, you can optionally specificy keywords and level, e.g.
 
-  -p {c212d3ce-dfb9-5469-08f5-f477b0d92305} 0xBEEF 0x05
+  -p {27ba81ef-27c8-50b0-d951-267383db4862} 0xBEEF 0x05
 
 To capture events, start/stop the trace via:
   logman start example
@@ -37,8 +36,9 @@ Alternatively, use a tool such as PerfView or WPR to configure and record traces
 namespace etw {
 namespace lean {
 
-constexpr char ProviderName[] = "billti-example";
-constexpr GUID ProviderGuid = {0xc212d3ce,0xdfb9,0x5469,{0x08,0xf5,0xf4,0x77,0xb0,0xd9,0x23,0x05}};
+// {27ba81ef-27c8-50b0-d951-267383db4862}
+constexpr char ProviderName[] = "billti-lean";
+constexpr GUID ProviderGuid = {0x27ba81ef,0x27c8,0x50b0,{0xd9,0x51,0x26,0x73,0x83,0xdb,0x48,0x62}};
 
 // Define the event descriptor data for each event
 // Note: Order of fields is: eventId, level, opcode, task, keyword

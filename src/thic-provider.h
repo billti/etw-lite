@@ -10,8 +10,9 @@
 namespace etw {
 namespace thic {
 
-constexpr char ProviderName[] = "thic-example";
-constexpr GUID ProviderGuid = {0xc212d3ce,0xdfb9,0x5469,{0x08,0xf5,0xf4,0x77,0xb0,0xd9,0x23,0x06}};
+// logman create trace -n thic -o thic.etl -p {1b0d5501-a5fb-5d95-d960-4647bec69d41}
+constexpr char ProviderName[] = "billti-thic";
+constexpr GUID ProviderGuid = {0x1b0d5501,0xa5fb,0x5d95,{0xd9,0x60,0x46,0x47,0xbe,0xc6,0x9d,0x41}};
 
 // Define the event descriptor data for each event
 // Note: Order of fields is: eventId, level, opcode, task, keyword
