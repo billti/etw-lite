@@ -10,7 +10,7 @@ APP_SLIM_H=lib/etw-metadata.h lib/etw-provider.h src/lean-provider.h
 APP_THIC_CPP=src/app-thic.cpp lib/etw-provider.cpp
 APP_THIC_H=lib/etw-metadata.h lib/etw-provider.h src/thic-provider.h
 
-all: app-lean.exe app-thic.exe app-none.exe
+all: app-lean.exe app-thic.exe app-none.exe activities.exe
 
 app-lean.exe: $(APP_SLIM_CPP) $(APP_SLIM_H)
 	$(CXX) $(CXXFLAGS) $(APP_SLIM_CPP) advapi32.lib $(DEFINES) /link $(LINKFLAGS)
@@ -21,6 +21,9 @@ app-thic.exe: $(APP_THIC_CPP) $(APP_THIC_H)
 # Build the "lean" provider with NO_ETW defined (i.e. ETW code should get removed)
 app-none.exe: $(APP_SLIM_CPP) $(APP_SLIM_H)
 	$(CXX) $(CXXFLAGS) $(APP_SLIM_CPP) advapi32.lib $(DEFINES) /DNO_ETW /link $(LINKFLAGS) /OUT:"$@"
+
+activities.exe: src/activities.cpp
+	$(CXX) /Od /Zi /MDd /std:c++17 $** advapi32.lib
 
 clean:
 	del *.obj *.exe *.ilk *.pdb
